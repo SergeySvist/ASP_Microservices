@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<Authors>SergeySvist</Authors>
+	<Company>PD21</Company>
+	<Product>MSA</Product>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<Configuration>Release</Configuration>
+  </PropertyGroup>
+
+</Project>

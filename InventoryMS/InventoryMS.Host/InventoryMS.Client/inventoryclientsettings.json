@@ -1,0 +1,11 @@
+{
+  "exclude": [
+    "**/bin",
+    "**/bower_component",
+    "**/jspm_packages",
+    "**/node_modules",
+    "**/obj",
+    "**/platforms"
+  ],
+  "InventoryServiceAddress": "http://localhost:5029/"
+}
