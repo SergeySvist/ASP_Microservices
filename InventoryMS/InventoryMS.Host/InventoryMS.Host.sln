@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventoryMS.Host", "Invento
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventoryMS.Contracts", "InventoryMS.Contracts\InventoryMS.Contracts.csproj", "{FC0FB1B4-60E8-45ED-93C9-4BC910D52D54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryMS.RefitTestApp", "InventoryMS.RefitTestApp\InventoryMS.RefitTestApp.csproj", "{277CB662-6FA0-430A-B00A-141DC5446C9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventoryMS.RefitTestApp", "InventoryMS.RefitTestApp\InventoryMS.RefitTestApp.csproj", "{277CB662-6FA0-430A-B00A-141DC5446C9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryMS.Client", "InventoryMS.Client\InventoryMS.Client.csproj", "{A4C73798-1243-480E-A704-07C0FF492CC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventoryMS.Client", "InventoryMS.Client\InventoryMS.Client.csproj", "{A4C73798-1243-480E-A704-07C0FF492CC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryMS.Events", "InventoryMS.Events\InventoryMS.Events.csproj", "{27E19DD6-E598-4444-BF01-D3AB68FAFE6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{A4C73798-1243-480E-A704-07C0FF492CC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4C73798-1243-480E-A704-07C0FF492CC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4C73798-1243-480E-A704-07C0FF492CC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27E19DD6-E598-4444-BF01-D3AB68FAFE6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27E19DD6-E598-4444-BF01-D3AB68FAFE6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27E19DD6-E598-4444-BF01-D3AB68FAFE6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27E19DD6-E598-4444-BF01-D3AB68FAFE6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
