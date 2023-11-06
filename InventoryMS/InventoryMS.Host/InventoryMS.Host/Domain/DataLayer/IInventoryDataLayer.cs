@@ -8,5 +8,7 @@ namespace InventoryMS.Host
         Task<InventoryItem> Add(InventoryItem inventoryItem);
         Task<List<InventoryItem>> GetAll();
         Task<List<InventoryItem>> GetByIds(long[] ids);
+        Task<InventoryItem> GetById(long id);
+        Task<bool> Edit(InventoryItem updatedInventoryItem);
     }
 }

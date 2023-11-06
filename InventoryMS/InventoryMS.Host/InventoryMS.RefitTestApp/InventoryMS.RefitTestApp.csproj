@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\InventoryMS.Client\InventoryMS.Client.csproj" />
     <ProjectReference Include="..\InventoryMS.Contracts\InventoryMS.Contracts.csproj" />
+    <ProjectReference Include="..\InventoryMS.Host\InventoryMS.Host.csproj" />
   </ItemGroup>
 
 </Project>

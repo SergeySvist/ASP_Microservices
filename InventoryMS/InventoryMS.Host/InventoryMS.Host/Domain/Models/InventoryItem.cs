@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using InventoryMS.Contracts;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace InventoryMS.Host.Domain.Models
 {
@@ -11,5 +13,31 @@ namespace InventoryMS.Host.Domain.Models
         [Required]
         public decimal Price { get; set; }
 
+
+        public InventoryItem UpdateFromEditInventoryItemDto(EditInventoryItemDTO inventoryItemToEditDTO)
+        {
+            List<PropertyInfo> properties = inventoryItemToEditDTO.GetProperties();
+
+            if(properties.Count > 0)
+            {
+                Type typeOfinventoryItem = this.GetType();
+                Type typeOfinventoryItemDTO = inventoryItemToEditDTO.GetType();
+
+                foreach (PropertyInfo property in properties)
+                {
+                    object valueToCopy = typeOfinventoryItemDTO.GetProperty(property.Name).GetValue(inventoryItemToEditDTO, null);
+
+                    PropertyInfo? propertyToUpdate = typeOfinventoryItem.GetProperty(property.Name);
+
+                    if(propertyToUpdate != null)
+                    {
+                        propertyToUpdate.SetValue(this, valueToCopy, null);
+
+                    }
+                }
+            }
+
+            return this;
+        }
     }
 }

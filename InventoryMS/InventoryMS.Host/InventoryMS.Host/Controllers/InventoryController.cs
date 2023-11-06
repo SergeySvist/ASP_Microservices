@@ -21,21 +21,28 @@ namespace InventoryMS.Host.Controllers
         [HttpGet]
         public async Task<List<InventoryItemDTO>> Get()
         {
-            return await _inventoryService.GetAll(); ;
+            return await _inventoryService.GetAll();
         }
 
         // POST api/<InventoryController>
         [HttpPost]
         public async Task<InventoryItemDTO> Post([FromBody] AddInventoryItemDTO inventoryItemToAdd)
         {
-            return await _inventoryService.AddInventoryItem(inventoryItemToAdd); ;
+            return await _inventoryService.AddInventoryItem(inventoryItemToAdd);
+        }
+
+        // PUT api/<InventoryController>
+        [HttpPut]
+        public async Task<bool> Put([FromBody] EditInventoryItemDTO inventoryItemToEdit)
+        {
+            return await _inventoryService.EditInventoryItem(inventoryItemToEdit);
         }
 
         // POST api/<InventoryController>/searchByIds
         [HttpPost("searchByIds")]
         public async Task<List<InventoryItemDTO>> SearchByIds([FromBody] long[] ids)
         {
-            return await _inventoryService.GetByIds(ids); ;
+            return await _inventoryService.GetByIds(ids);
         }
 
     }
