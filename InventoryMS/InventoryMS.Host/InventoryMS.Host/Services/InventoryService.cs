@@ -22,16 +22,19 @@ namespace InventoryMS.Host.Services
 
         public async Task<bool> EditInventoryItem(EditInventoryItemDTO inventoryItemToEdit)
         {
-            if(inventoryItemToEdit.IsUpdated())
+            if (inventoryItemToEdit.Id > 0)
             {
-                if(inventoryItemToEdit.Id > 0)
+                if (inventoryItemToEdit.IsUpdated())
                 {
+
                     InventoryItem inventoryItemById = await _inventoryDataLayer.GetById(inventoryItemToEdit.Id);
 
-                    if(inventoryItemById != null)
+                    if (inventoryItemById != null)
                     {
+                        _eventService.ProcessAndPublishInventoryItemUpdates(inventoryItemById, inventoryItemToEdit);
+
                         inventoryItemById.UpdateFromEditInventoryItemDto(inventoryItemToEdit);
-                        
+
                         return await _inventoryDataLayer.Edit(inventoryItemById);
                     }
                 }

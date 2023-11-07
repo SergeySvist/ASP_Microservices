@@ -18,8 +18,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IMessageBusProducer, Producer>();
+builder.Services.AddScoped<IEventService, EventService>();
+
 builder.Services.AddTransient<IInventoryDataLayer, InventoryDataLayer>();
-builder.Services.AddSingleton<IEventService, EventService>();
 
 var app = builder.Build();
 

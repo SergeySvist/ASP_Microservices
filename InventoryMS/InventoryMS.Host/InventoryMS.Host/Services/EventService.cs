@@ -1,9 +1,19 @@
-﻿using InventoryMS.Events;
+﻿using InventoryMS.Contracts;
+using InventoryMS.Events;
+using InventoryMS.Host.Domain.Models;
+using InventoryMS.Host.MessageBroker;
 
 namespace InventoryMS.Host.Services
 {
     public class EventService : IEventService
     {
+        private readonly IMessageBusProducer _messageBusProducer;
+
+        public EventService(IMessageBusProducer messageBusProducer)
+        {
+            _messageBusProducer = messageBusProducer;
+        }
+
         public InventoryMsEvent CreateInventoryItemNameUpdatedEvent(long Id, string OldName, string NewName)
         {
             return new InventoryMsEvent
@@ -20,6 +30,37 @@ namespace InventoryMS.Host.Services
                 EventType = EventType.InventoryItemPriceUpdated,
                 EventPayload = new InventoryItemPriceUpdatedPayload { ItemId = Id, OldPrice = OldPrice, NewPrice = NewPrice }
             };
+        }
+
+        public Task<bool> ProcessAndPublishInventoryItemUpdates(InventoryItem itemBeforeUpdate, EditInventoryItemDTO inventoryItemUpdates)
+        {
+            try
+            {
+                List<InventoryMsEvent> eventsToPublish = new List<InventoryMsEvent>();
+
+                if (inventoryItemUpdates.Name != null && itemBeforeUpdate.Name != inventoryItemUpdates.Name)
+                {
+                    eventsToPublish.Add(this.CreateInventoryItemNameUpdatedEvent(inventoryItemUpdates.Id, itemBeforeUpdate.Name, inventoryItemUpdates.Name));
+                }
+                if (inventoryItemUpdates.Price.HasValue && itemBeforeUpdate.Price != inventoryItemUpdates.Price)
+                {
+                    eventsToPublish.Add(this.CreateInventoryItemPriceUpdatedEvent(inventoryItemUpdates.Id, itemBeforeUpdate.Price, (decimal)inventoryItemUpdates.Price));
+                }
+
+                if (eventsToPublish.Count > 0)
+                {
+                    Parallel.ForEach(eventsToPublish, (evnt) =>
+                    {
+                        _messageBusProducer.PublishEvent(evnt);
+                    });
+                }
+
+                return Task.FromResult(true);
+            }
+            catch (Exception )
+            {
+                throw;
+            }
         }
     }
 }

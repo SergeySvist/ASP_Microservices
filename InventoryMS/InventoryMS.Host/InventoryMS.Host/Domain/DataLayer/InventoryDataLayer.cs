@@ -43,7 +43,7 @@ namespace InventoryMS.Host.Domain.DataLayer
             {
                 InventoryItem? inventoryItemById = await db.InventoryItems.FirstOrDefaultAsync(i => i.Id == id);
 
-                return inventoryItemById == null ? inventoryItemById : new InventoryItem();
+                return inventoryItemById != null ? inventoryItemById : new InventoryItem();
             }
         }
 
@@ -52,15 +52,20 @@ namespace InventoryMS.Host.Domain.DataLayer
             using (InventoryMsDbContext db = new InventoryMsDbContext())
             {
                 int rowsUpdated = 0;
-                InventoryItem? inventoryItemToUpdate = await db.InventoryItems.FirstOrDefaultAsync(i => i.Id == updatedInventoryItem.Id);
 
-                if (inventoryItemToUpdate != null)
-                {
-                    inventoryItemToUpdate.Name = updatedInventoryItem.Name;
-                    inventoryItemToUpdate.Price = updatedInventoryItem.Price;
+                db.InventoryItems.Update(updatedInventoryItem);
 
-                    await db.SaveChangesAsync();
-                }
+                rowsUpdated = await db.SaveChangesAsync();
+
+                //InventoryItem? inventoryItemToUpdate = await db.InventoryItems.FirstOrDefaultAsync(i => i.Id == updatedInventoryItem.Id);
+
+                //if (inventoryItemToUpdate != null)
+                //{
+                //    inventoryItemToUpdate.Name = updatedInventoryItem.Name;
+                //    inventoryItemToUpdate.Price = updatedInventoryItem.Price;
+
+                //    rowsUpdated = await db.SaveChangesAsync();
+                //}
 
                 return rowsUpdated > 0;
             }

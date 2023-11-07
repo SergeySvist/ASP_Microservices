@@ -4,10 +4,11 @@ using InventoryMS.Host.Domain.Models;
 //var inventoryMsClient = RestService.For<IInventoryMSClient>("http://localhost:5029/");
 
 //var inventoryItems = await inventoryMsClient.Get();
-EditInventoryItemDTO dto = new EditInventoryItemDTO() { Id = 1, Name = "Serg", Price = 101};
+EditInventoryItemDTO dto = new EditInventoryItemDTO() { Id = 1 };
 
-InventoryItem item  = new InventoryItem();
+var list = dto.GetProperties();
 
-Console.WriteLine($"{item.Name} => {item.Price}");
-item.UpdateFromEditInventoryItemDto(dto);
-Console.WriteLine($"{item.Name} => {item.Price}");
+foreach (var item in list)
+{
+    Console.WriteLine(item);
+}

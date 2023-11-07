@@ -12,7 +12,8 @@ namespace InventoryMS.Host.Domain.Models
         public string Name { get; set; }
         [Required]
         public decimal Price { get; set; }
-
+        [Required]
+        public int Stock { get; set; }
 
         public InventoryItem UpdateFromEditInventoryItemDto(EditInventoryItemDTO inventoryItemToEditDTO)
         {
