@@ -1,5 +1,6 @@
 using InventoryMS.Client;
 using InvoiceMS.Infrastructure.DataLayer;
+using InvoiceMS.Infrastructure.MessageBroker;
 using InvoiceMS.Infrastructure.Services;
 using UsersMS.Client;
 
@@ -16,6 +17,7 @@ builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IUserMsClient, UsersMsClient>();
 builder.Services.AddScoped<IInvoiceDataLayer, InvoiceDataLayer>();
 
+builder.Services.AddHostedService<InventoryMsEventsConsumer>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="InventoryMS.Client" Version="1.0.1" />
     <PackageReference Include="InventoryMS.Contracts" Version="1.0.0" />
+    <PackageReference Include="InventoryMS.Events" Version="1.0.0" />
     <PackageReference Include="Mapster" Version="7.4.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11" />
@@ -19,6 +20,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.6.0" />
     <PackageReference Include="UsersMS.Client" Version="1.0.0" />
     <PackageReference Include="UsersMS.DTO" Version="1.0.0" />
   </ItemGroup>
