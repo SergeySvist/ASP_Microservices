@@ -24,9 +24,12 @@ namespace InvoiceMS.Infrastructure.MessageBroker
         private readonly IConnection rabbitMqConnection;
         private readonly IModel rabbitMqChannel;
         private readonly EventingBasicConsumer channelConsumer;
+        private readonly IInventoryMsEventsProcessor _inventoryMsEventsProcessor;
 
-        public InventoryMsEventsConsumer()
+        public InventoryMsEventsConsumer(IInventoryMsEventsProcessor inventoryMsEventsProcessor)
         {
+            _inventoryMsEventsProcessor = inventoryMsEventsProcessor;
+
             try
             {
                 rabbitMqConnection = rabbitMqConnectionFactory.CreateConnection();
@@ -65,11 +68,13 @@ namespace InvoiceMS.Infrastructure.MessageBroker
 
                     if (eventReceived != null)
                     {
-                        //TODO: Process event by service
+                        _inventoryMsEventsProcessor.ProcessEvent(eventReceived);
+
                     }
                 }
                 catch (Exception)
                 {
+                    Debug.WriteLine("Error processing incoming event");
                     throw;
                 }            
             };

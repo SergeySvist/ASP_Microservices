@@ -1,5 +1,7 @@
 using InventoryMS.Client;
+using InvoiceMS.Infrastructure;
 using InvoiceMS.Infrastructure.DataLayer;
+using InvoiceMS.Infrastructure.EventProcessors;
 using InvoiceMS.Infrastructure.MessageBroker;
 using InvoiceMS.Infrastructure.Services;
 using UsersMS.Client;
@@ -14,10 +16,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
-builder.Services.AddScoped<IUserMsClient, UsersMsClient>();
-builder.Services.AddScoped<IInvoiceDataLayer, InvoiceDataLayer>();
+
+builder.Services.AddTransient<IInvoiceDataLayer, InvoiceDataLayer>();
+builder.Services.AddTransient<IInventoryMsEventsProcessor, InventoryMsEventsProcessor>();
+builder.Services.AddTransient<IInventoryItemUpdatesNotificationsProcessor, InvoiceService>();
+
+builder.Services.AddSingleton<IUserMsClient, UsersMsClient>();
 
 builder.Services.AddHostedService<InventoryMsEventsConsumer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

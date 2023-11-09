@@ -2,6 +2,7 @@
 using InventoryMS.Events;
 using InventoryMS.Host.Domain.Models;
 using InventoryMS.Host.MessageBroker;
+using System.Text.Json;
 
 namespace InventoryMS.Host.Services
 {
@@ -19,7 +20,7 @@ namespace InventoryMS.Host.Services
             return new InventoryMsEvent
             {
                 EventType = EventType.InventoryItemNameUpdated,
-                EventPayload = new InventoryItemNameUpdatedPayload { ItemId = Id, OldName = OldName, NewName = NewName }
+                EventPayload = JsonSerializer.Serialize(new InventoryItemNameUpdatedPayload { ItemId = Id, OldName = OldName, NewName = NewName })
             };
         }
 
@@ -28,7 +29,7 @@ namespace InventoryMS.Host.Services
             return new InventoryMsEvent
             {
                 EventType = EventType.InventoryItemPriceUpdated,
-                EventPayload = new InventoryItemPriceUpdatedPayload { ItemId = Id, OldPrice = OldPrice, NewPrice = NewPrice }
+                EventPayload = JsonSerializer.Serialize( new InventoryItemPriceUpdatedPayload { ItemId = Id, OldPrice = OldPrice, NewPrice = NewPrice })
             };
         }
 

@@ -1,4 +1,5 @@
 ﻿using InvoiceMS.Contracts;
+using InvoiceMS.Infrastructure.EventProcessors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
