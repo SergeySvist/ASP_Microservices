@@ -13,9 +13,9 @@ namespace InvoiceMS.Infrastructure.EventProcessors
 {
     public class InventoryMsEventsProcessor : IInventoryMsEventsProcessor
     {
-        private readonly IInventoryItemUpdatesNotificationsProcessor _updatesNotificationProcessor;
+        private readonly IInventoryItemUpdateNotificationsProcessor _updatesNotificationProcessor;
 
-        public InventoryMsEventsProcessor(IInventoryItemUpdatesNotificationsProcessor invoiceService)
+        public InventoryMsEventsProcessor(IInventoryItemUpdateNotificationsProcessor invoiceService)
         {
             _updatesNotificationProcessor = invoiceService;
         }

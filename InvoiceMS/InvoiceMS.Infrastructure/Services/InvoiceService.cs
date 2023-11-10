@@ -15,7 +15,7 @@ using InvoiceMS.Infrastructure.EventProcessors;
 
 namespace InvoiceMS.Infrastructure.Services
 {
-    public class InvoiceService : IInvoiceService, IInventoryItemUpdatesNotificationsProcessor
+    public class InvoiceService : IInvoiceService, IInventoryItemUpdateNotificationsProcessor
     {
         private readonly IUserMsClient _userMsClient;
         private readonly IInventoryMsClient _inventoryMsClient;
@@ -97,14 +97,29 @@ namespace InvoiceMS.Infrastructure.Services
             return invoicesByUserId.Adapt<List<InvoiceDTO>>();
         }
 
-        public Task ProcessInventoryItemNameUpdatedNotification(InventoryItemNameUpdatedNotification updateNotification)
+        public async Task ProcessInventoryItemNameUpdatedNotification(InventoryItemNameUpdatedNotification updateNotification)
         {
-            throw new NotImplementedException();
+            List<InvoiceEntry> invoiceEntriesByInventoryItemId = await _invoiceDataLayer.GetInvoiceEntriesByInventoryItemId(updateNotification.ItemId);
+
+            foreach(InvoiceEntry entry in invoiceEntriesByInventoryItemId)
+            {
+                entry.Name = updateNotification.NewName;
+            }
+
+            await _invoiceDataLayer.SaveUpdatedInvoiceEntries(invoiceEntriesByInventoryItemId);
         }
 
-        public Task ProcessInventoryItemPriceUpdatedNotification(InventoryItemPriceUpdatedNotification updateNotification)
+        public async Task ProcessInventoryItemPriceUpdatedNotification(InventoryItemPriceUpdatedNotification updateNotification)
         {
-            throw new NotImplementedException();
+            List<InvoiceEntry> invoiceEntriesByInventoryItemId = await _invoiceDataLayer.GetInvoiceEntriesByInventoryItemId(updateNotification.ItemId);
+
+            foreach (InvoiceEntry entry in invoiceEntriesByInventoryItemId)
+            {
+                entry.Price = updateNotification.NewPrice;
+            }
+
+            await _invoiceDataLayer.SaveUpdatedInvoiceEntries(invoiceEntriesByInventoryItemId);
+
         }
     }
 }

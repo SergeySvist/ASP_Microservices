@@ -13,5 +13,7 @@ namespace InvoiceMS.Infrastructure.DataLayer
         Task<bool> DeleteInvoiceById(long id);
         Task<Invoice> GetInvoiceById(long id);
         Task<List<Invoice>> GetInvoiceByUserId(long id);
+        Task<List<InvoiceEntry>> GetInvoiceEntriesByInventoryItemId(long itemId);
+        Task SaveUpdatedInvoiceEntries(List<InvoiceEntry> invoiceEntriesByInventoryItemId);
     }
 }

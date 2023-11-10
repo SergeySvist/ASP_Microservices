@@ -74,7 +74,7 @@ namespace InvoiceMS.Infrastructure.MessageBroker
                 }
                 catch (Exception)
                 {
-                    Debug.WriteLine("Error processing incoming event");
+                    Debug.WriteLine("Error processing incoming message");
                     throw;
                 }            
             };

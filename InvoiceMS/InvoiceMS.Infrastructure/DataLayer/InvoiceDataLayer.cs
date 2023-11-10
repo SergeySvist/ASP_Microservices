@@ -115,5 +115,25 @@ namespace InvoiceMS.Infrastructure.DataLayer
                 return invoicesByUserId;
             }
         }
+
+        public async Task<List<InvoiceEntry>> GetInvoiceEntriesByInventoryItemId(long itemId)
+        {
+            using (InvoiceMsDbContext dbContext = new InvoiceMsDbContext())
+            {
+                return await dbContext.InvoiceEntries.Where(ie => ie.InventoryId == itemId).ToListAsync();
+            }
+        }
+
+        public Task SaveUpdatedInvoiceEntries(List<InvoiceEntry> invoiceEntriesByInventoryItemId)
+        {
+            using (InvoiceMsDbContext dbContext = new InvoiceMsDbContext())
+            {
+                dbContext.InvoiceEntries.UpdateRange(invoiceEntriesByInventoryItemId);
+
+                dbContext.SaveChanges();
+
+                return Task.CompletedTask;
+            }
+        }
     }
 }
