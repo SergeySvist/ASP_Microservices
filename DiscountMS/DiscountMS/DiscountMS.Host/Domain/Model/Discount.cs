@@ -15,7 +15,7 @@ namespace DiscountMS.Host.Domain.Model
         [Required]
         public DateTime DateFrom { get; set;}
 
-        public DateTime DateTo { get; set;}
+        public DateTime? DateTo { get; set;}
         [Required]
         public DiscountTerminationType DiscountTerminationType { get; set; }
         [Required]

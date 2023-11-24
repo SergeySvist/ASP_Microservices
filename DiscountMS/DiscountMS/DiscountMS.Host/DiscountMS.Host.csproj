@@ -20,8 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Domain\DataLayer\" />
+    <ProjectReference Include="..\DiscountMS.Contracts\DiscountMS.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
