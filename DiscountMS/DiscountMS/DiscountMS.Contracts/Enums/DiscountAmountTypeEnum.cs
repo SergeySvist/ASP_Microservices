@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace DiscountMS.Contracts.Enums
 {
-    public enum DiscountTerminationType
+    public enum DiscountAmountTypeEnum
     {
-        SpecificDate =1,
-        OutOfStock =2,
-        Never =3,
+        FixedPrice = 1,
+        Percentage = 2,
     }
 }

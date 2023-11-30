@@ -25,12 +25,40 @@ namespace DiscountMS.Host.Services
 
         public async Task<PersonalDiscountDTO> AddPersonalDiscount(AddPersonalDiscountDTO addPersonal)
         {
-            Discount baseDiscountPart = new Discount();
-            PersonalDiscount specificDiscountPart = new PersonalDiscount();
+            Discount baseDiscountPart = new Discount { 
+                DiscountType = new DiscountType { DiscountTypeId = (int)addPersonal.DiscountType },
+                DiscountAmountType = new DiscountAmountType { DiscountAmountTypeId = (int)addPersonal.DiscountAmountType },
+                DiscountAmount = addPersonal.DiscountAmount,
+                DateFrom = addPersonal.DateFrom,
+                DateTo = addPersonal.DateTo,
+                DiscountTerminationType = new DiscountTerminationType { DiscountTerminationTypeId = (int)addPersonal.DiscountTerminationType },
+            };
+            PersonalDiscount specificDiscountPart = new PersonalDiscount { 
+                UserId = addPersonal.UserId,
+            };
 
             Tuple<Discount, PersonalDiscount> addedDiscount = await _discountDataLayer.AddPersonalDiscount(baseDiscountPart, specificDiscountPart);
 
-            return null;
+            PersonalDiscountDTO addedPersonalDiscountDTO = BuildPersonalDiscountDTOFromDbParts(baseDiscountPart, specificDiscountPart);
+
+            return addedPersonalDiscountDTO;
+        }
+
+        private PersonalDiscountDTO BuildPersonalDiscountDTOFromDbParts(Discount baseDiscountPart, PersonalDiscount specificDiscountPart)
+        {
+            PersonalDiscountDTO discountDTO = new PersonalDiscountDTO()
+            {
+                DiscountId = baseDiscountPart.DiscountId,
+                DiscountAmountType = (Contracts.Enums.DiscountAmountTypeEnum)baseDiscountPart.DiscountAmountType.DiscountAmountTypeId,
+                DiscountAmount = baseDiscountPart.DiscountAmount,
+                DateFrom = baseDiscountPart.DateFrom,
+                DateTo = baseDiscountPart.DateTo,
+                TerminationType = (Contracts.Enums.DiscountTerminationTypeEnum)baseDiscountPart.DiscountTerminationType.DiscountTerminationTypeId,
+                PersonalDiscountId = specificDiscountPart.PersonalDiscountId,
+                UserId = specificDiscountPart.UserId,
+            };
+
+            return discountDTO;
         }
 
         public async Task<InventoryItemDiscountDTO[]> GetActiveInventoryItemDiscounts()
@@ -44,11 +72,11 @@ namespace DiscountMS.Host.Services
                 InventoryItemDiscountDTO discountDTO = new InventoryItemDiscountDTO()
                 {
                     DiscountId = itemDiscountParts.Item1.DiscountId,
-                    DiscountAmountType = (Contracts.Enums.DiscountAmountType)itemDiscountParts.Item1.DiscountAmountType.DiscountAmountTypeId,
+                    DiscountAmountType = (DiscountAmountTypeEnum)itemDiscountParts.Item1.DiscountAmountType.DiscountAmountTypeId,
                     DiscountAmount = itemDiscountParts.Item1.DiscountAmount,
                     DateFrom = itemDiscountParts.Item1.DateFrom,
                     DateTo = itemDiscountParts.Item1.DateTo,
-                    TerminationType = (Contracts.Enums.DiscountTerminationType)itemDiscountParts.Item1.DiscountTerminationType.DiscountTerminationTypeId,
+                    TerminationType = (DiscountTerminationTypeEnum)itemDiscountParts.Item1.DiscountTerminationType.DiscountTerminationTypeId,
                     InventoryItemDiscountId = itemDiscountParts.Item2.InventoryItemDiscountId,
                     InventoryId = itemDiscountParts.Item2.InventoryItemId,
                 };
@@ -71,11 +99,11 @@ namespace DiscountMS.Host.Services
                 PersonalDiscountDTO discountDTO = new PersonalDiscountDTO()
                 {
                     DiscountId = itemDiscountParts.Item1.DiscountId,
-                    DiscountAmountType = (Contracts.Enums.DiscountAmountType)itemDiscountParts.Item1.DiscountAmountType.DiscountAmountTypeId,
+                    DiscountAmountType = (Contracts.Enums.DiscountAmountTypeEnum)itemDiscountParts.Item1.DiscountAmountType.DiscountAmountTypeId,
                     DiscountAmount = itemDiscountParts.Item1.DiscountAmount,
                     DateFrom = itemDiscountParts.Item1.DateFrom,
                     DateTo = itemDiscountParts.Item1.DateTo,
-                    TerminationType = (Contracts.Enums.DiscountTerminationType)itemDiscountParts.Item1.DiscountTerminationType.DiscountTerminationTypeId,
+                    TerminationType = (Contracts.Enums.DiscountTerminationTypeEnum)itemDiscountParts.Item1.DiscountTerminationType.DiscountTerminationTypeId,
                     PersonalDiscountId = itemDiscountParts.Item2.PersonalDiscountId,
                     UserId = itemDiscountParts.Item2.UserId,
                 };

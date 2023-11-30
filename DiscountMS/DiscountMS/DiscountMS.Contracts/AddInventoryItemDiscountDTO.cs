@@ -7,14 +7,8 @@ using System.Threading.Tasks;
 
 namespace DiscountMS.Contracts
 {
-    public class AddInventoryItemDiscountDTO
+    public class AddInventoryItemDiscountDTO: AddDiscountDTO
     {
-        public DiscountAmountType DiscountAmountType { get; set; }
-        public decimal DiscountAmount { get; set; }
-        public DateTime DateFrom { get; set; }
-        public DateTime DateTo { get; set; }
-        public DiscountTerminationType TerminationType { get; set; }
-
         public long InventoryId { get; set; }
 
     }

@@ -2,6 +2,7 @@
 using DiscountMS.Host.Domain.DbCtx;
 using DiscountMS.Host.Domain.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DiscountMS.Host.Domain.DataLayer
 {
@@ -12,9 +13,58 @@ namespace DiscountMS.Host.Domain.DataLayer
             throw new NotImplementedException();
         }
 
-        public Task<Tuple<Discount, PersonalDiscount>> AddPersonalDiscount(Discount baseDiscountPart, PersonalDiscount specificDiscountPart)
+        public Task<Tuple<DiscountType?, DiscountAmountType?, DiscountTerminationType?>> GetDiscountCategories(int discountTypeId, int discountAmountTypeId, int discountTerminationTypeId)
         {
-            throw new NotImplementedException();
+            using (DiscountServiceDbContext dbContext = new DiscountServiceDbContext())
+            {
+                DiscountType? discountTypeById = dbContext.DiscountTypes.Where(dt => dt.DiscountTypeId == discountTypeId).FirstOrDefault();
+                DiscountAmountType? discountAmountTypeById = dbContext.DiscountAmountTypes.Where(dt => dt.DiscountAmountTypeId == discountAmountTypeId).FirstOrDefault();
+                DiscountTerminationType? discountTerminationTypeById = dbContext.DiscountTerminationTypes.Where(dt => dt.DiscountTerminationTypeId == discountTerminationTypeId).FirstOrDefault();
+                
+
+                return Task.FromResult( new Tuple<DiscountType?, DiscountAmountType?, DiscountTerminationType?>(discountTypeById, discountAmountTypeById, discountTerminationTypeById));
+            }
+        }
+
+        public async Task<Tuple<Discount, PersonalDiscount>> AddPersonalDiscount(Discount baseDiscountPart, PersonalDiscount specificDiscountPart)
+        {
+            using (DiscountServiceDbContext dbContext = new DiscountServiceDbContext())
+            {
+                using (IDbContextTransaction addDiscountTransaction = dbContext.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        dbContext.PersonalDiscounts.Add(specificDiscountPart);
+                        await dbContext.SaveChangesAsync();
+
+                        if(specificDiscountPart.PersonalDiscountId > 0)
+                        {
+                            DiscountType? discountTypeById = dbContext.DiscountTypes.Where(dt => dt.DiscountTypeId == baseDiscountPart.DiscountType.DiscountTypeId).FirstOrDefault();
+                            DiscountAmountType? discountAmountTypeById = dbContext.DiscountAmountTypes.Where(dt => dt.DiscountAmountTypeId == baseDiscountPart.DiscountAmountType.DiscountAmountTypeId).FirstOrDefault();
+                            DiscountTerminationType? discountTerminationTypeById = dbContext.DiscountTerminationTypes.Where(dt => dt.DiscountTerminationTypeId == baseDiscountPart.DiscountTerminationType.DiscountTerminationTypeId).FirstOrDefault();
+
+                            baseDiscountPart.DiscountType = discountTypeById;
+                            baseDiscountPart.DiscountAmountType = discountAmountTypeById;
+                            baseDiscountPart.DiscountTerminationType = discountTerminationTypeById;
+
+                            baseDiscountPart.SpecificDiscountTableKey = specificDiscountPart.PersonalDiscountId;
+
+                            dbContext.Discounts.Add(baseDiscountPart);
+                            await dbContext.SaveChangesAsync();
+                        }
+
+                        addDiscountTransaction.Commit();
+
+                        return new Tuple<Discount, PersonalDiscount>(baseDiscountPart, specificDiscountPart);
+                    }
+                    catch (Exception)
+                    {
+                        addDiscountTransaction.Rollback();
+                        throw;
+                    }
+                }
+
+            }
         }
 
         public async Task<Tuple<Discount, InventoryItemDiscount?>[]> GetAllActiveInventoryItemDiscounts()
