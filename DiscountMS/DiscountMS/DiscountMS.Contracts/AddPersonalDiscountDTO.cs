@@ -9,6 +9,11 @@ namespace DiscountMS.Contracts
 {
     public class AddPersonalDiscountDTO : AddDiscountDTO
     {
+        public AddPersonalDiscountDTO()
+        {
+            DiscountType = DiscountTypeEnum.Personal;
+        }
+
         public long UserId { get; set; }
 
     }

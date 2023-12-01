@@ -8,11 +8,48 @@ namespace DiscountMS.Host.Domain.DataLayer
 {
     public class DiscountDataLayer : IDiscountDataLayer
     {
-        public Task<Tuple<Discount, InventoryItemDiscount>> AddInventoryItemDiscount(Discount baseDiscountPart, InventoryItemDiscount specificDiscountPart)
+        public async Task<Tuple<Discount, InventoryItemDiscount>> AddInventoryItemDiscount(Discount baseDiscountPart, InventoryItemDiscount specificDiscountPart)
         {
-            throw new NotImplementedException();
+            using (DiscountServiceDbContext dbContext = new DiscountServiceDbContext())
+            {
+                using (IDbContextTransaction addDiscountTransaction = dbContext.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        dbContext.InventoryItemDiscounts.Add(specificDiscountPart);
+                        await dbContext.SaveChangesAsync();
+
+                        if (specificDiscountPart.InventoryItemDiscountId > 0)
+                        {
+                            DiscountType? discountTypeById = dbContext.DiscountTypes.Where(dt => dt.DiscountTypeId == baseDiscountPart.DiscountType.DiscountTypeId).FirstOrDefault();
+                            DiscountAmountType? discountAmountTypeById = dbContext.DiscountAmountTypes.Where(dt => dt.DiscountAmountTypeId == baseDiscountPart.DiscountAmountType.DiscountAmountTypeId).FirstOrDefault();
+                            DiscountTerminationType? discountTerminationTypeById = dbContext.DiscountTerminationTypes.Where(dt => dt.DiscountTerminationTypeId == baseDiscountPart.DiscountTerminationType.DiscountTerminationTypeId).FirstOrDefault();
+
+                            baseDiscountPart.DiscountType = discountTypeById;
+                            baseDiscountPart.DiscountAmountType = discountAmountTypeById;
+                            baseDiscountPart.DiscountTerminationType = discountTerminationTypeById;
+
+                            baseDiscountPart.SpecificDiscountTableKey = specificDiscountPart.InventoryItemDiscountId;
+
+                            dbContext.Discounts.Add(baseDiscountPart);
+                            await dbContext.SaveChangesAsync();
+                        }
+
+                        addDiscountTransaction.Commit();
+
+                        return new Tuple<Discount, InventoryItemDiscount>(baseDiscountPart, specificDiscountPart);
+                    }
+                    catch (Exception)
+                    {
+                        addDiscountTransaction.Rollback();
+                        throw;
+                    }
+                }
+
+            }
         }
 
+        //Note: sould be used outside DataLayer only
         public Task<Tuple<DiscountType?, DiscountAmountType?, DiscountTerminationType?>> GetDiscountCategories(int discountTypeId, int discountAmountTypeId, int discountTerminationTypeId)
         {
             using (DiscountServiceDbContext dbContext = new DiscountServiceDbContext())

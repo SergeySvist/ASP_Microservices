@@ -2,6 +2,7 @@
 using DiscountMS.Contracts.Enums;
 using DiscountMS.Host.Domain.DataLayer;
 using DiscountMS.Host.Domain.Model;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DiscountMS.Host.Services
 {
@@ -15,24 +16,35 @@ namespace DiscountMS.Host.Services
 
         public async Task<InventoryItemDiscountDTO> AddInventoryItemDiscount(AddInventoryItemDiscountDTO addInventory)
         {
-            Discount baseDiscountPart = new Discount();
-            InventoryItemDiscount specificDiscountPart = new InventoryItemDiscount();
+            Discount baseDiscountPart = BuildDiscountObjectFromAddDiscountDTO(addInventory);
+            InventoryItemDiscount specificDiscountPart = new InventoryItemDiscount() { 
+                InventoryItemId = addInventory.InventoryId,
+            };
 
             Tuple<Discount, InventoryItemDiscount> addedDiscount = await _discountDataLayer.AddInventoryItemDiscount(baseDiscountPart, specificDiscountPart);
 
-            return null;
+            InventoryItemDiscountDTO inventoryItemDiscountDTO = BuildInventoryItemDiscountDTOFromDbParts(baseDiscountPart, specificDiscountPart);
+
+            return inventoryItemDiscountDTO;
+        }
+
+        private Discount BuildDiscountObjectFromAddDiscountDTO(AddDiscountDTO addDiscount)
+        {
+            return new Discount()
+            {
+                DiscountType = new DiscountType { DiscountTypeId = (int)addDiscount.DiscountType },
+                DiscountAmountType = new DiscountAmountType { DiscountAmountTypeId = (int)addDiscount.DiscountAmountType },
+                DiscountAmount = addDiscount.DiscountAmount,
+                DateFrom = addDiscount.DateFrom,
+                DateTo = addDiscount.DateTo,
+                DiscountTerminationType = new DiscountTerminationType { DiscountTerminationTypeId = (int)addDiscount.DiscountTerminationType },
+
+            };
         }
 
         public async Task<PersonalDiscountDTO> AddPersonalDiscount(AddPersonalDiscountDTO addPersonal)
         {
-            Discount baseDiscountPart = new Discount { 
-                DiscountType = new DiscountType { DiscountTypeId = (int)addPersonal.DiscountType },
-                DiscountAmountType = new DiscountAmountType { DiscountAmountTypeId = (int)addPersonal.DiscountAmountType },
-                DiscountAmount = addPersonal.DiscountAmount,
-                DateFrom = addPersonal.DateFrom,
-                DateTo = addPersonal.DateTo,
-                DiscountTerminationType = new DiscountTerminationType { DiscountTerminationTypeId = (int)addPersonal.DiscountTerminationType },
-            };
+            Discount baseDiscountPart = BuildDiscountObjectFromAddDiscountDTO(addPersonal);
             PersonalDiscount specificDiscountPart = new PersonalDiscount { 
                 UserId = addPersonal.UserId,
             };
@@ -59,6 +71,29 @@ namespace DiscountMS.Host.Services
             };
 
             return discountDTO;
+        }
+
+        private InventoryItemDiscountDTO BuildInventoryItemDiscountDTOFromDbParts(Discount baseDiscountPart, InventoryItemDiscount specificDiscountPart)
+        {
+            InventoryItemDiscountDTO discountDTO = BuildDiscountDtoBase<InventoryItemDiscountDTO>(baseDiscountPart);
+            discountDTO.InventoryItemDiscountId = specificDiscountPart.InventoryItemDiscountId;
+            discountDTO.InventoryId = specificDiscountPart.InventoryItemId;
+
+            return discountDTO;
+        }
+
+        private T BuildDiscountDtoBase<T>(Discount baseDiscountPart) where T : DiscountDTO
+        {
+            T result = Activator.CreateInstance<T>();
+
+            result.DiscountId = baseDiscountPart.DiscountId;
+            result.DiscountAmountType = (Contracts.Enums.DiscountAmountTypeEnum)baseDiscountPart.DiscountAmountType.DiscountAmountTypeId;
+            result.DiscountAmount = baseDiscountPart.DiscountAmount;
+            result.DateFrom = baseDiscountPart.DateFrom;
+            result.DateTo = baseDiscountPart.DateTo;
+            result.TerminationType = (Contracts.Enums.DiscountTerminationTypeEnum)baseDiscountPart.DiscountTerminationType.DiscountTerminationTypeId;
+
+            return result;
         }
 
         public async Task<InventoryItemDiscountDTO[]> GetActiveInventoryItemDiscounts()
@@ -96,17 +131,7 @@ namespace DiscountMS.Host.Services
 
             foreach (Tuple<Discount, PersonalDiscount> itemDiscountParts in personalDiscountParts)
             {
-                PersonalDiscountDTO discountDTO = new PersonalDiscountDTO()
-                {
-                    DiscountId = itemDiscountParts.Item1.DiscountId,
-                    DiscountAmountType = (Contracts.Enums.DiscountAmountTypeEnum)itemDiscountParts.Item1.DiscountAmountType.DiscountAmountTypeId,
-                    DiscountAmount = itemDiscountParts.Item1.DiscountAmount,
-                    DateFrom = itemDiscountParts.Item1.DateFrom,
-                    DateTo = itemDiscountParts.Item1.DateTo,
-                    TerminationType = (Contracts.Enums.DiscountTerminationTypeEnum)itemDiscountParts.Item1.DiscountTerminationType.DiscountTerminationTypeId,
-                    PersonalDiscountId = itemDiscountParts.Item2.PersonalDiscountId,
-                    UserId = itemDiscountParts.Item2.UserId,
-                };
+                PersonalDiscountDTO discountDTO = BuildPersonalDiscountDTOFromDbParts(itemDiscountParts.Item1, itemDiscountParts.Item2);
 
                 activeDiscountDTOs.Add(discountDTO);
             }

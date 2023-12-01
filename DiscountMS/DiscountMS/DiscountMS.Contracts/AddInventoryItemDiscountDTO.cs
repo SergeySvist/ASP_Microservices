@@ -9,6 +9,9 @@ namespace DiscountMS.Contracts
 {
     public class AddInventoryItemDiscountDTO: AddDiscountDTO
     {
+        public AddInventoryItemDiscountDTO() {
+            DiscountType = DiscountTypeEnum.InventoryItem;
+        }
         public long InventoryId { get; set; }
 
     }
