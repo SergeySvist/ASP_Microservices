@@ -4,6 +4,7 @@ using InvoiceMS.Infrastructure.DataLayer;
 using InvoiceMS.Infrastructure.EventProcessors;
 using InvoiceMS.Infrastructure.MessageBroker;
 using InvoiceMS.Infrastructure.Services;
+using UserMS.CacheClient;
 using UsersMS.Client;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IUserMSCacheClient, UserMSCacheClient>();
 
 builder.Services.AddTransient<IInvoiceDataLayer, InvoiceDataLayer>();
 builder.Services.AddTransient<IInventoryMsEventsProcessor, InventoryMsEventsProcessor>();

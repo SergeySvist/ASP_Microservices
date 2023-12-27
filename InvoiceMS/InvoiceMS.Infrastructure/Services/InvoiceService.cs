@@ -12,6 +12,7 @@ using InvoiceMS.Infrastructure.Domain.Entities;
 using InvoiceMS.Infrastructure.DataLayer;
 using Mapster;
 using InvoiceMS.Infrastructure.EventProcessors;
+using UserMS.CacheClient;
 
 namespace InvoiceMS.Infrastructure.Services
 {
@@ -20,16 +21,18 @@ namespace InvoiceMS.Infrastructure.Services
         private readonly IUserMsClient _userMsClient;
         private readonly IInventoryMsClient _inventoryMsClient;
         private readonly IInvoiceDataLayer _invoiceDataLayer;
-        public InvoiceService(IUserMsClient userMsClient, IInvoiceDataLayer invoiceDataLayer)
+        private readonly IUserMSCacheClient _userMsCacheClient;
+        public InvoiceService(IUserMsClient userMsClient, IInvoiceDataLayer invoiceDataLayer, IUserMSCacheClient userMsCacheClient)
         {
             _userMsClient = userMsClient;
             _inventoryMsClient = InventoryMsClient.Client;
             _invoiceDataLayer = invoiceDataLayer;
+            _userMsCacheClient = userMsCacheClient;
         }
 
         public async Task<InvoiceDTO> AddInvoice(AddInvoiceDTO addInvoiceDTO)
         {
-            UserDTO userById = await _userMsClient.GetUserByID(addInvoiceDTO.UserId);
+            UserDTO userById = await GetUserById(addInvoiceDTO.UserId);
             InvoiceDTO addedInvoiceDTO = new InvoiceDTO();
 
             if (userById.Id > 0 && addInvoiceDTO.InvoiceEntries.Length > 0)
@@ -77,6 +80,16 @@ namespace InvoiceMS.Infrastructure.Services
             }
 
             return addedInvoiceDTO;
+        }
+
+        private async Task<UserDTO> GetUserById(long userId)
+        {
+
+            UserDTO? userFromCache = _userMsCacheClient.GetUserById(userId);
+            if (userFromCache != null) return userFromCache;
+
+            UserDTO userFromClient = await _userMsClient.GetUserByID(userId);
+            return userFromClient;
         }
 
         public async Task<bool> DeleteInvoiceById(long id)

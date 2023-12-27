@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using UsersMS.Cache;
 using UsersMS.Domain.DataLayer;
 using UsersMS.Domain.Models;
 using UsersMS.DTO;
@@ -9,11 +10,13 @@ namespace UsersMS.Services
     {
         private readonly IPasswordService _passwordService;
         private readonly IUserDataLayer _userDataLayer;
+        private readonly IUserCacheClient _userCacheClient;
 
-        public UserService (IPasswordService passwordService, IUserDataLayer userDataLayer)
+        public UserService (IPasswordService passwordService, IUserDataLayer userDataLayer, IUserCacheClient userCacheClient)
         {
             _passwordService = passwordService;
             _userDataLayer = userDataLayer;
+            _userCacheClient = userCacheClient;
         }
 
         public async Task<UserDTO> CreateUserFromDTO(AddUserDTO userToAdd)
@@ -22,6 +25,10 @@ namespace UsersMS.Services
             newuser.PasswordHash = _passwordService.CreatePasswordHash(userToAdd.Password);
 
             User addedUser = await _userDataLayer.AddUser(newuser);
+
+            UserDTO userDTO = addedUser.Adapt<UserDTO>();
+
+            _userCacheClient.AddUserFromUserDTO(userDTO);
 
             return addedUser.Adapt<UserDTO>();
 

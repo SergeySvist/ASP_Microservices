@@ -1,4 +1,5 @@
 using System.Text.Json;
+using UsersMS.Cache;
 using UsersMS.Domain.DataLayer;
 using UsersMS.Services;
 
@@ -20,6 +21,7 @@ builder.Services.AddTransient<IPasswordService, PasswordService>();
 builder.Services.AddTransient<IUserDataLayer, UserDataLayer>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserCacheClient, UserCacheClient>();
 
 var app = builder.Build();
 
